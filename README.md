@@ -6,24 +6,25 @@ Desenvolvendo um controle remoto.
 
 ### Integrantes
 
-- Nome1
-- Nome2
+- Guilherme dos Santos Martins
+- Marlon Silva Pereira
 
 ### Ideia
 
-<!--  Descreva aqui em poucas palavras qual a ideia do seu controle. Se ele vai ser de jogo ou de aplicação -->
+Controle para o jogo SanjaCity Adventures (desnvolvido na matéria de Design de Software)
 
 ### Nome
 
-<!-- De um nome ao seu controle! -->
+SanjaCity Controller
 
 ### Usuários 
 
-<!-- Descreva aqui quem seriam os possíveis usuários deste controle. -->
+Jogadores de SanjaCity Adventures que buscam uma nova expêriencia com o jogo através de um contrele próprio
 
 ### Software/Jogo 
 
-<!-- Qual software que seu controle vai controlar? -->
+O jogo SanjaCity Adventures feito através do pygame
+Repositório para o jogo: https://github.com/marlonsp/Projeto_Final
 
 ### Jornada do usuários (3 pts)
 
@@ -31,20 +32,29 @@ Desenvolvendo um controle remoto.
 
 ### Comandos/ Feedbacks (2 pts)
 
-<!-- 
-Quais são os comandos/ operacões possíveis do seu controle?
+Comandos:
 
-Quais os feedbacks que seu controle vai fornecer ao usuário?
--->
+- Botão de power (liga e pareia o controle)
+- Botão de start (inicia o jogo)
+- Botão para seleção de personagem
+- Botão de pulo
+- Controle para a movimentação do personagem (Joypad)
+
+Feedback:
+
+- Led indicativo de controle ativo (Rugged Metal Pushbutton)
+- Motor de vibração para quando o jogador receber dano
 
 ## In/OUT (3 pts)
 
-<!--
-Para cada Comando/ Feedback do seu controle, associe qual sensores/ atuadores pretende utilizar? Faca em formato de lista, exemplo:
+- Botão Power: Rugged Metal Pushbutton
+- Botão Start: Push button Azul
+- Botão Seleção Personagem: Push button amarelo
+- Botão Pulo: Push button vermelho
+- Controle Movimentação: Joypad
 
-- Avanca música: Push button amarelo
-- Volume da música: Fita de LED indicando potência do som
--->
+- Led COntrole Ativo: Rugged Metal Pushbutton
+- Motro Indicador: Vibracall
 
 ### Design (2 pts)
 
