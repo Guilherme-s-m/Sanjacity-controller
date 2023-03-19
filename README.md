@@ -57,7 +57,5 @@ Feedback:
 - Motro Indicador: Vibracall
 
 ### Design (2 pts)
+<img width="457" alt="Design" src="https://user-images.githubusercontent.com/79490502/226214814-e53987ef-cb27-4517-a444-5d07fb4c4fcf.png">
 
-<!--
-Faca um esboco de como seria esse controle (vai ter uma etapa que terão que detalhar melhor isso).
--->
