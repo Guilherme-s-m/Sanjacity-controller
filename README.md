@@ -6,24 +6,25 @@ Desenvolvendo um controle remoto.
 
 ### Integrantes
 
-- Nome1
-- Nome2
+- Guilherme dos Santos Martins
+- Marlon Silva Pereira
 
 ### Ideia
 
-<!--  Descreva aqui em poucas palavras qual a ideia do seu controle. Se ele vai ser de jogo ou de aplicação -->
+Controle para o jogo SanjaCity Adventures (desnvolvido na matéria de Design de Software)
 
 ### Nome
 
-<!-- De um nome ao seu controle! -->
+SanjaCity Controller
 
 ### Usuários 
 
-<!-- Descreva aqui quem seriam os possíveis usuários deste controle. -->
+Jogadores de SanjaCity Adventures que buscam uma nova expêriencia com o jogo através de um contrele próprio
 
 ### Software/Jogo 
 
-<!-- Qual software que seu controle vai controlar? -->
+O jogo SanjaCity Adventures feito através do pygame
+Repositório para o jogo: https://github.com/marlonsp/Projeto_Final
 
 ### Jornada do usuários (3 pts)
 
