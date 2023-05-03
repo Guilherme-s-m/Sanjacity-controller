@@ -14,9 +14,14 @@
 /************************************************************************/
 
 // LEDs
-#define LED_PIO      PIOC
-#define LED_PIO_ID   ID_PIOC
-#define LED_IDX      8
+// #define LED_PIO      PIOD
+// #define LED_PIO_ID   ID_PIOD
+// #define LED_IDX      28
+// #define LED_IDX_MASK (1 << LED_IDX)
+
+#define LED_PIO      PIOA
+#define LED_PIO_ID   ID_PIOA
+#define LED_IDX      3
 #define LED_IDX_MASK (1 << LED_IDX)
 
 // Botão
@@ -29,6 +34,11 @@
 #define BUT1_PIO_ID   ID_PIOB
 #define BUT1_IDX      3
 #define BUT1_IDX_MASK (1 << BUT1_IDX)
+
+#define BUT2_PIO      PIOA
+#define BUT2_PIO_ID   ID_PIOA
+#define BUT2_IDX      0
+#define BUT2_IDX_MASK (1 << BUT2_IDX)
 
 #define AFEC_POT AFEC0
 #define AFEC_POT_ID ID_AFEC0
@@ -110,13 +120,23 @@ void but_callback(void) {
 }
 
 void but1_callback(void) {
-  // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  // xSemaphoreGiveFromISR(xSemaphoreBut1, &xHigherPriorityTaskWoken);
 
   uint increment = 0;
   if(pio_get(BUT1_PIO, PIO_INPUT, BUT1_IDX_MASK) == 0) {
 	// rise edge
 	increment = 7;
+  } else {
+	// fall edge
+  }
+  xQueueSendFromISR(xQueueButFreq, (void *)&increment, 10);;
+}
+
+void but2_callback(void) {
+
+  uint increment = 0;
+  if(pio_get(BUT2_PIO, PIO_INPUT, BUT2_IDX_MASK) == 0) {
+	// rise edge
+	increment = 9;
   } else {
 	// fall edge
   }
@@ -171,23 +191,31 @@ void io_init(void) {
 	pmc_enable_periph_clk(LED_PIO_ID);
 	pmc_enable_periph_clk(BUT_PIO_ID);
 	pmc_enable_periph_clk(BUT1_PIO_ID);
+	pmc_enable_periph_clk(BUT2_PIO_ID);
 
 	// Configura Pinos
 	pio_configure(LED_PIO, PIO_OUTPUT_0, LED_IDX_MASK, PIO_DEFAULT | PIO_DEBOUNCE);
 	pio_configure(BUT_PIO, PIO_INPUT, BUT_IDX_MASK, PIO_PULLUP);
 	pio_configure(BUT1_PIO, PIO_INPUT, BUT1_IDX_MASK, PIO_PULLUP);
+	pio_configure(BUT2_PIO, PIO_INPUT, BUT2_IDX_MASK, PIO_PULLUP);
 
 	pio_handler_set(BUT_PIO,
                   BUT_PIO_ID,
                   BUT_IDX_MASK,
-                  PIO_IT_EDGE,
+                  PIO_IT_FALL_EDGE,
                   but_callback);
 
   	pio_handler_set(BUT1_PIO,
 				  BUT1_PIO_ID,
 				  BUT1_IDX_MASK,
-				  PIO_IT_EDGE,
+				  PIO_IT_FALL_EDGE,
 				  but1_callback);
+
+	pio_handler_set(BUT2_PIO,
+				  BUT2_PIO_ID,
+				  BUT2_IDX_MASK,
+				  PIO_IT_FALL_EDGE,
+				  but2_callback);
 
 	// Ativa interrupção e limpa primeira IRQ gerada na ativacao
 	pio_enable_interrupt(BUT_PIO, BUT_IDX_MASK);
@@ -196,11 +224,17 @@ void io_init(void) {
 	pio_enable_interrupt(BUT1_PIO, BUT1_IDX_MASK);
   	pio_get_interrupt_status(BUT1_PIO);
 
+	pio_enable_interrupt(BUT2_PIO, BUT2_IDX_MASK);
+	pio_get_interrupt_status(BUT2_PIO);
+
 	NVIC_EnableIRQ(BUT_PIO_ID);
 	NVIC_SetPriority(BUT_PIO_ID, 4);
 
 	NVIC_EnableIRQ(BUT1_PIO_ID);
 	NVIC_SetPriority(BUT1_PIO_ID, 4);
+
+	NVIC_EnableIRQ(BUT2_PIO_ID);
+	NVIC_SetPriority(BUT2_PIO_ID, 4);
 }
 
 static void configure_console(void) {
@@ -349,12 +383,19 @@ void task_bluetooth(void) {
 				flagPulo = 0;
 			}
 			else if(recived == 1){
+				pio_set(LED_PIO, LED_IDX_MASK);
+				vTaskDelay(50);
+				pio_clear(LED_PIO, LED_IDX_MASK);
 				button1 = '1';
 				flagPulo = 1;
 			} else if(recived == 7){
 				button1 = '7';
 				flagPulo = 0;
+			} else if (recived == 9){
+				button1 = '9';
+				flagPulo = 0;
 			}
+			
 		}
 		if(xQueueReceive(xQueueProc, &(adc), 10)){
 			if(adc.value > 2500) {
