@@ -70,8 +70,13 @@ TimerHandle_t xTimer;
 
 #define TASK_BLUETOOTH_STACK_SIZE            (4096/sizeof(portSTACK_TYPE))
 #define TASK_BLUETOOTH_STACK_PRIORITY        (tskIDLE_PRIORITY)
+
+#define TASK_HANDSHAKE_STACK_PRIORITY		(tskIDLE_PRIORITY)
+#define TASK_HANDSHAKE_STACK_SIZE			(4096/sizeof(portSTACK_TYPE))
+
 QueueHandle_t xQueueButFreq;
 QueueHandle_t xQueueProc;
+volatile char flagHandshake = 0;
 
 typedef struct {
   uint value;
@@ -335,7 +340,30 @@ void vTimerCallback(TimerHandle_t xTimer) {
   afec_channel_enable(AFEC_POT, AFEC_POT_CHANNEL);
   afec_start_software_conversion(AFEC_POT);
 }
-
+void task_handshake(void){
+	int rx = 0;
+	char h = 'H';
+	char eof = 'X';
+	while(!flagHandshake){
+				// envia status botão
+		while(!usart_is_tx_ready(USART_COM)) {
+			vTaskDelay(10 / portTICK_PERIOD_MS);
+		}
+		usart_write(USART_COM, h);
+		
+		// envia fim de pacote
+		while(!usart_is_tx_ready(USART_COM)) {
+			vTaskDelay(10 / portTICK_PERIOD_MS);
+		}
+		usart_write(USART_COM, eof);
+		vTaskDelay(100);
+		if (usart_read(USART_COM,&rx)==1){
+			if(rx == 'H'){
+				flagHandshake = 1;
+			}
+		}
+	}
+}
 void task_bluetooth(void) {
 	printf("Task Bluetooth started \n");
 	
@@ -374,6 +402,7 @@ void task_bluetooth(void) {
 	// Task não deve retornar.
 	while(1) {
 		// atualiza valor do botão
+		if (flagHandshake){
 		if( xQueueReceive( xQueueButFreq, &recived, 10)) {
 			// printf("\n");
 			// printf("Button 1: %d \n", recived);
@@ -435,6 +464,7 @@ void task_bluetooth(void) {
 
 		// dorme por 500 ms
 		vTaskDelay(10 / portTICK_PERIOD_MS);
+	}
 	}
 }
 
@@ -505,7 +535,7 @@ int main(void) {
 
 	/* Create task to make led blink */
 	xTaskCreate(task_bluetooth, "BLT", TASK_BLUETOOTH_STACK_SIZE, NULL,	TASK_BLUETOOTH_STACK_PRIORITY, NULL);
-
+	xTaskCreate(task_handshake, "HSK", TASK_HANDSHAKE_STACK_SIZE, NULL,	TASK_HANDSHAKE_STACK_PRIORITY, NULL);
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 

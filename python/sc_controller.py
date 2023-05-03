@@ -73,6 +73,10 @@ class SerialControllerInterface:
         elif data == b'9':
             logging.info("KEYDOWN E")
             pyautogui.keyDown(self.mapping.button['E'])
+        elif data == b'H':
+            print("handshake")
+            logging.info("HANDSHAKE")
+            self.ser.write(b'H')
 
 
         self.incoming = self.ser.read()
