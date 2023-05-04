@@ -33,6 +33,15 @@ class SerialControllerInterface:
         #Pula linha
         print("")
         print("data: ", data)
+        flag = 0
+        # if flag == 0:
+        #     if data == b'W':
+        #         self.ser.write(b'W')
+        #         print("")
+        #         print("HANDSHAKE")
+        #         print("")
+        #         flag = 1
+        # else:
         if data == b'1':
             print("datab1")
             logging.info("KEYDOWN A")
@@ -73,10 +82,6 @@ class SerialControllerInterface:
         elif data == b'9':
             logging.info("KEYDOWN E")
             pyautogui.keyDown(self.mapping.button['E'])
-        elif data == b'H':
-            print("handshake")
-            logging.info("HANDSHAKE")
-            self.ser.write(b'H')
 
 
         self.incoming = self.ser.read()
