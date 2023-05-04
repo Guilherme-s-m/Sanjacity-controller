@@ -64,6 +64,7 @@
 // Descomente para enviar dados
 // pela serial debug
 
+
 #define DEBUG_SERIAL
 
 #ifdef DEBUG_SERIAL
@@ -384,6 +385,18 @@ void vTimerCallback(TimerHandle_t xTimer) {
   afec_start_software_conversion(AFEC_POT);
 }
 
+void task_comunicacao(void){
+	char readChar;
+	while(1){
+		if (usart_read(USART_COM, &readChar)==1){
+			if (readChar == 'W'){
+				flagHandshake = 1;
+			}
+			
+		}
+	}
+}
+
 void task_bluetooth(void) {
 	printf("Task Bluetooth started \n");
 	
@@ -439,10 +452,7 @@ void task_bluetooth(void) {
 
 				// dorme por 10 ms
 				vTaskDelay(10 / portTICK_PERIOD_MS);
-				char status = usart_read(USART_COM, &readChar);
-				if(status == 1){
-					flagHandshake = 1;
-				}
+				
 			} else {
 				//atualiza valor do botão
 				if( xQueueReceive( xQueueButFreq, &recived, 10)) {
@@ -576,9 +586,10 @@ int main(void) {
 	if (xQueueProc == NULL)
 		printf("falha em criar a queue xQueueProc \n");
 
+
 	/* Create task to make led blink */
 	xTaskCreate(task_bluetooth, "BLT", TASK_BLUETOOTH_STACK_SIZE, NULL,	TASK_BLUETOOTH_STACK_PRIORITY, NULL);
-
+	xTaskCreate(task_comunicacao, "COM", TASK_BLUETOOTH_STACK_SIZE, NULL,	TASK_BLUETOOTH_STACK_PRIORITY, NULL);
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 

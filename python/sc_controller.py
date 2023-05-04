@@ -4,15 +4,15 @@ import argparse
 import time
 import logging
 
+
 class MyControllerMap:
     def __init__(self):
-        self.button = {'A': 'UP', 'B': 'RIGHT', 'C': 'LEFT', 'D': 'UP', 'E': 'RIGHT'} # Fast forward (10 seg) pro Youtube
+        self.button = {'A': 'UP', 'B': 'RIGHT', 'C': 'LEFT', 'D': 'S', 'E': 'A'} # Fast forward (10 seg) pro Youtube
 
 class SerialControllerInterface:
     # Protocolo
     # byte 1 -> Botão 1 (estado - Apertado 1 ou não 0)
     # byte 2 -> EOP - End of Packet -> valor reservado 'X'
-
     def __init__(self, port, baudrate):
         self.ser = serial.Serial(port, baudrate=baudrate)
         self.mapping = MyControllerMap()
@@ -33,16 +33,13 @@ class SerialControllerInterface:
         #Pula linha
         print("")
         print("data: ", data)
-        flag = 0
-        # if flag == 0:
-        #     if data == b'W':
-        #         self.ser.write(b'W')
-        #         print("")
-        #         print("HANDSHAKE")
-        #         print("")
-        #         flag = 1
-        # else:
-        if data == b'1':
+
+        if data == b'W':
+            self.ser.write(b'W')
+            print("")
+            print("HANDSHAKE")
+            print("")
+        elif data == b'1':
             print("datab1")
             logging.info("KEYDOWN A")
             pyautogui.keyDown(self.mapping.button['A'])
@@ -82,6 +79,8 @@ class SerialControllerInterface:
         elif data == b'9':
             logging.info("KEYDOWN E")
             pyautogui.keyDown(self.mapping.button['E'])
+
+
 
 
         self.incoming = self.ser.read()
